@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: #EFEBDE;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Cursor ripple — a warm-light ring that expands out of the cursor and fades */
+@keyframes ripple-expand {
+  0%   { opacity: 0.6;  transform: scale(0.2); }
+  60%  { opacity: 0.35; }
+  100% { opacity: 0;    transform: scale(4.5); }
+}
+
+.ripple {
+  background: radial-gradient(
+    circle,
+    transparent 34%,
+    rgba(255, 240, 200, 0.55) 46%,
+    transparent 54%,
+    rgba(255, 240, 200, 0.25) 60%,
+    transparent 70%
+  );
+  animation: ripple-expand 1.4s cubic-bezier(0.15, 0.7, 0.3, 1) forwards;
+  mix-blend-mode: screen;
+  will-change: transform, opacity;
+}
+
+/* Menu pattern — slow, continuous drift so the topo lines feel alive */
+@keyframes pattern-drift {
+  0%   { transform: scale(1.15) translate(0%, 0%); }
+  25%  { transform: scale(1.20) translate(-2%, -2%); }
+  50%  { transform: scale(1.18) translate(-4%, -1%); }
+  75%  { transform: scale(1.20) translate(-2%, -3%); }
+  100% { transform: scale(1.15) translate(0%, 0%); }
+}
+.menu-pattern {
+  animation: pattern-drift 45s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Ticker rows — two identical blocks slide by -100% of their own width for
+   a seamless loop. Left = normal direction; right = reversed. */
+@keyframes ticker-left {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-100%); }
+}
+@keyframes ticker-right {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
