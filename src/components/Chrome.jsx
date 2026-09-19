@@ -65,11 +65,13 @@ export function Wordmark({ className = "" }) {
 // ---------- Wordmark — inline (mobile centered under LN halo) ----------
 export function WordmarkInline({ className = "" }) {
   return (
-    <div className={`flex items-baseline gap-1.5 leading-none ${className}`}>
-      <span className="text-[24px] tracking-tight text-black italic font-black font-serif">
+    <div
+      className={`flex items-baseline gap-1.5 leading-none whitespace-nowrap ${className}`}
+    >
+      <span className="text-[18px] tracking-tight text-black italic font-black font-serif">
         Madam Mary
       </span>
-      <span className="text-[24px] font-black tracking-tight text-black font-sans">
+      <span className="text-[18px] font-black tracking-tight text-black font-sans">
         Onu Ogwo
       </span>
     </div>
