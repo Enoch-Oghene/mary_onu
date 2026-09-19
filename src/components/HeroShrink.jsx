@@ -145,9 +145,13 @@ export default function HeroShrink() {
       className="relative"
       style={{ height: "350vh" }}
     >
-      <div className="sticky top-0 h-screen overflow-hidden bg-cream">
-        {/* Base cream background (initial state) */}
-        <div className="absolute inset-0 bg-cream" />
+      <div className="sticky top-0 h-screen overflow-hidden bg-white">
+        {/* Base white background — matches the topo's own fill so any
+            partial transparency in the topo layer (e.g. tiny scroll wobble
+            pushing videoOpacity below 1.0) can't reveal a different colour.
+            Was bg-cream previously, which caused a warm strip to bleed
+            through at the top on mobile browsers. */}
+        <div className="absolute inset-0 bg-white" />
 
         {/* Animated topo background — hoisted out of the shrinking frame so
             it covers the full sticky container (100vh) instead of just the
