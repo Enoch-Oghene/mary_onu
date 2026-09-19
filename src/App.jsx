@@ -81,7 +81,7 @@ export default function App() {
             pointerEvents: chromeOpacity < 0.05 ? "none" : "auto",
           }}
         >
-          <div className="md:hidden flex flex-col items-center gap-1 mt-14">
+          <div className="md:hidden flex flex-col items-center gap-1 mt-24">
             <WordmarkInline />
             <div
               className="text-[8px] tracking-[0.3em] font-bold text-black/75"

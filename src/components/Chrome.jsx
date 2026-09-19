@@ -68,10 +68,10 @@ export function WordmarkInline({ className = "" }) {
     <div
       className={`flex items-baseline gap-1.5 leading-none whitespace-nowrap ${className}`}
     >
-      <span className="text-[23px] tracking-tight text-black italic font-black font-serif">
+      <span className="text-[25px] tracking-tight text-black italic font-black font-serif">
         Madam Mary
       </span>
-      <span className="text-[23px] font-black tracking-tight text-black font-sans">
+      <span className="text-[25px] font-black tracking-tight text-black font-sans">
         Onu Ogwo
       </span>
     </div>

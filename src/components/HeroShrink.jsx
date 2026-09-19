@@ -149,6 +149,17 @@ export default function HeroShrink() {
         {/* Base cream background (initial state) */}
         <div className="absolute inset-0 bg-cream" />
 
+        {/* Animated topo background — hoisted out of the shrinking frame so
+            it covers the full sticky container (100vh) instead of just the
+            frame (which is window.innerHeight, and can be shorter than 100vh
+            on mobile browsers where the URL bar makes the visible viewport
+            smaller than the large one). Fades on scroll via videoOpacity;
+            pauses once the hero has mostly shrunk away so we don't burn CPU
+            while the olive+topo layer is doing the heavy lifting. */}
+        <div className="absolute inset-0" style={{ opacity: videoOpacity }}>
+          <HeroTopoBackground active={progress < 0.6} />
+        </div>
+
         {/* Olive + animated topo — fades in as we scroll */}
         <div
           className="absolute inset-0"
@@ -195,17 +206,9 @@ export default function HeroShrink() {
             transform: "translate(-50%, -50%)",
           }}
         >
-          {/* Animated topo background — replaces the cloud video. Renders
-              its own contour lines + blurb-revealed detail overlay, and
-              distorts the contours as ripples where you touch/hover.
-              Paused once the hero has mostly shrunk away so we don't burn
-              CPU while the olive+topo layer is doing the heavy lifting. */}
-          <div className="absolute inset-0" style={{ opacity: videoOpacity }}>
-            <HeroTopoBackground active={progress < 0.6} />
-          </div>
-
           {/* Vignette — a soft edge darkening to keep focus on the portrait.
-              Same treatment as before, just riding the topo now. */}
+              Stays tied to the frame so it shrinks along with it, providing
+              a subtle spotlight around the portrait as the frame contracts. */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
