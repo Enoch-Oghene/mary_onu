@@ -78,16 +78,23 @@ export function WordmarkInline({ className = "" }) {
   );
 }
 
+// Stripe checkout for the "Give" CTA. Kept as a module-level constant so
+// it's easy to swap without hunting through JSX; opened in a new tab so
+// the memorial page isn't unloaded when the user proceeds to payment.
+const STRIPE_URL = "https://buy.stripe.com/00w14mgLJfkkaBr1pvfbq01";
+
 // ---------- Store button ----------
 export function StoreButton({ className = "" }) {
   return (
-    <button
-      type="button"
+    <a
+      href={STRIPE_URL}
+      target="_blank"
+      rel="noopener noreferrer"
       className={`flex items-center gap-2 bg-acid text-black px-4 py-2.5 rounded-md hover:brightness-95 active:brightness-90 transition ${className}`}
     >
       <ShoppingBag size={16} strokeWidth={2.5} />
       <span className="text-xs font-black tracking-wider">GIVE</span>
-    </button>
+    </a>
   );
 }
 

@@ -35,6 +35,26 @@ export default function App() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Lock/unlock page scrolling when the tap-to-lock toggle is engaged.
+  // body overflow:hidden is enough on desktop, but on mobile browsers the
+  // touch scroller ignores it — we also need a non-passive touchmove
+  // listener that calls preventDefault(). Wheel is covered for trackpads
+  // and mice. Other listeners (e.g. the topo's ripple/blurb touchmove) are
+  // unaffected: they still receive the event, we just win the scroll race.
+  useEffect(() => {
+    if (!locked) return;
+    const prevent = (e) => e.preventDefault();
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("touchmove", prevent, { passive: false });
+    window.addEventListener("wheel", prevent, { passive: false });
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("touchmove", prevent);
+      window.removeEventListener("wheel", prevent);
+    };
+  }, [locked]);
+
   return (
     <div className="w-full bg-cream">
       <HeroShrink />
