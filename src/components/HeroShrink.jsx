@@ -1,17 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import AnimatedTopo from "./AnimatedTopo.jsx";
+import HeroTopoBackground from "./HeroTopoBackground.jsx";
 
-const BG_VIDEO = "/bg_video.mp4";
 const PORTRAIT = "/portraits/portrait_hero.webp";
 
 // Ticker text — repeats across both rows, moves in opposite directions
 const TICKER_A = "AT HOME WE DID IT ";
 const TICKER_B = "A BRITISH GP WEEKEND I WILL REMEMBER FOREVER ";
-
-// Ripple config — only active while progress ≈ 0
-const RIPPLE_LIFETIME_MS = 1400;
-const RIPPLE_MIN_INTERVAL_MS = 70;
-const RIPPLE_MIN_DISTANCE_PX = 20;
 
 const smoothstep = (t) => (t < 0 ? 0 : t > 1 ? 1 : t * t * (3 - 2 * t));
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -19,15 +14,21 @@ const lerp = (a, b, t) => a + (b - a) * t;
 // Seamless-loop ticker row: two identical inline blocks slide by -100% of their own width
 function TickerRow({ text, speedSec, direction, className = "", style }) {
   const repeated = new Array(6).fill(text).join(" ");
-  const anim = { animation: `ticker-${direction} ${speedSec}s linear infinite` };
+  const anim = {
+    animation: `ticker-${direction} ${speedSec}s linear infinite`,
+  };
   return (
     <div
       className={`w-full overflow-hidden whitespace-nowrap ${className}`}
       style={style}
     >
       <div className="inline-flex">
-        <div className="inline-block pr-8" style={anim}>{repeated}</div>
-        <div className="inline-block pr-8" style={anim}>{repeated}</div>
+        <div className="inline-block pr-8" style={anim}>
+          {repeated}
+        </div>
+        <div className="inline-block pr-8" style={anim}>
+          {repeated}
+        </div>
       </div>
     </div>
   );
@@ -36,18 +37,12 @@ function TickerRow({ text, speedSec, direction, className = "", style }) {
 export default function HeroShrink() {
   const containerRef = useRef(null);
   const heroRef = useRef(null);
-  const videoRef = useRef(null);
 
   const [progress, setProgress] = useState(0);
   const [size, setSize] = useState({
     w: typeof window !== "undefined" ? window.innerWidth : 1440,
     h: typeof window !== "undefined" ? window.innerHeight : 900,
   });
-
-  // Ripples (only active near the top)
-  const [ripples, setRipples] = useState([]);
-  const rippleIdRef = useRef(0);
-  const lastRippleRef = useRef({ time: 0, x: -1000, y: -1000 });
 
   // Scroll + resize wiring
   useEffect(() => {
@@ -76,61 +71,30 @@ export default function HeroShrink() {
     };
   }, []);
 
-  // Autoplay nudge for stricter browsers
-  useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
-    v.muted = true;
-    v.playsInline = true;
-    v.play().catch(() => {});
-  }, []);
-
-  // Ripples / portrait parallax — only when the hero is at rest at the top
+  // Portrait tilt parallax — only when the hero is at rest at the top.
+  // (The ripple + blurb behaviour that used to live here is now owned by
+  // HeroTopoBackground, which distorts the contour lines directly instead
+  // of overlaying a decorative ring.)
   useEffect(() => {
     if (progress > 0.03) return;
-    const spawnFrom = (clientX, clientY, force = false) => {
+    const tiltFrom = (clientX, clientY) => {
       const hero = heroRef.current;
       if (!hero) return;
       const rect = hero.getBoundingClientRect();
-      const x = clientX - rect.left;
-      const y = clientY - rect.top;
-      const nx = x / rect.width - 0.5;
-      const ny = y / rect.height - 0.5;
+      const nx = (clientX - rect.left) / rect.width - 0.5;
+      const ny = (clientY - rect.top) / rect.height - 0.5;
       hero.style.setProperty("--tilt-x", `${nx * 30}px`);
       hero.style.setProperty("--tilt-y", `${ny * 20}px`);
-      const now = performance.now();
-      const last = lastRippleRef.current;
-      const dx = x - last.x;
-      const dy = y - last.y;
-      const dist = Math.hypot(dx, dy);
-      if (
-        force ||
-        (now - last.time >= RIPPLE_MIN_INTERVAL_MS &&
-          dist >= RIPPLE_MIN_DISTANCE_PX)
-      ) {
-        const id = rippleIdRef.current++;
-        setRipples((prev) => [...prev, { id, x, y }]);
-        lastRippleRef.current = { time: now, x, y };
-        window.setTimeout(() => {
-          setRipples((prev) => prev.filter((r) => r.id !== id));
-        }, RIPPLE_LIFETIME_MS);
-      }
     };
-    const onMouseMove = (e) => spawnFrom(e.clientX, e.clientY);
-    const onTouchStart = (e) => {
-      const t = e.touches[0];
-      if (t) spawnFrom(t.clientX, t.clientY, true);
-    };
+    const onMouseMove = (e) => tiltFrom(e.clientX, e.clientY);
     const onTouchMove = (e) => {
       const t = e.touches[0];
-      if (t) spawnFrom(t.clientX, t.clientY);
+      if (t) tiltFrom(t.clientX, t.clientY);
     };
     window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("touchstart", onTouchStart, { passive: true });
     window.addEventListener("touchmove", onTouchMove, { passive: true });
     return () => {
       window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("touchstart", onTouchStart);
       window.removeEventListener("touchmove", onTouchMove);
     };
   }, [progress]);
@@ -231,20 +195,17 @@ export default function HeroShrink() {
             transform: "translate(-50%, -50%)",
           }}
         >
-          {/* Cloud video */}
-          <video
-            ref={videoRef}
-            src={BG_VIDEO}
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="auto"
-            className="absolute inset-0 w-full h-full object-cover"
-            style={{ opacity: videoOpacity }}
-          />
+          {/* Animated topo background — replaces the cloud video. Renders
+              its own contour lines + blurb-revealed detail overlay, and
+              distorts the contours as ripples where you touch/hover.
+              Paused once the hero has mostly shrunk away so we don't burn
+              CPU while the olive+topo layer is doing the heavy lifting. */}
+          <div className="absolute inset-0" style={{ opacity: videoOpacity }}>
+            <HeroTopoBackground active={progress < 0.6} />
+          </div>
 
-          {/* Vignette (same as original hero) */}
+          {/* Vignette — a soft edge darkening to keep focus on the portrait.
+              Same treatment as before, just riding the topo now. */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
@@ -280,20 +241,6 @@ export default function HeroShrink() {
               }}
             />
           </div>
-
-          {/* Ripples (only spawned near progress 0) */}
-          {ripples.map((r) => (
-            <div
-              key={r.id}
-              className="ripple absolute pointer-events-none rounded-full"
-              style={{
-                left: r.x - 60,
-                top: r.y - 60,
-                width: 120,
-                height: 120,
-              }}
-            />
-          ))}
 
           {/* Olive wash on the photo — same two-layer treatment as the
               inactive tiles in the desktop menu (multiply + color blend). */}
