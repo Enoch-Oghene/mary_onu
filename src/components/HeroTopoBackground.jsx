@@ -69,12 +69,13 @@ export default function HeroTopoBackground({ active = true }) {
     const CURSOR_INTERVAL_MS = 220; // trail spacing along cursor
     const MAX_BLURBS = 20; // safety cap
 
-    // Palette — creams and light-warm-greys sampled per blurb
+    // Palette — neutral greys only, no warm/cream tint. Read as tonal
+    // atmosphere over the white surface rather than as colour accents.
     const BLURB_PALETTE = [
-      "234, 227, 213", // warm cream
-      "224, 217, 202", // deeper cream
-      "220, 217, 210", // pale warm grey
-      "210, 207, 200", // slightly cooler warm grey
+      "232, 232, 232", // near-white
+      "218, 218, 218", // light grey
+      "205, 205, 205", // mid-light grey
+      "225, 225, 225", // very light grey
     ];
 
     // Ripple throttling on the input side (matches HeroShrink's old feel)
@@ -128,7 +129,7 @@ export default function HeroTopoBackground({ active = true }) {
         points: makeBlobShape(size),
         color,
         blur: 14 + Math.random() * 12, // 14-26px feathered edge
-        peakAlpha: 0.48 + Math.random() * 0.28, // 0.48-0.76 at hold
+        peakAlpha: 0.38 + Math.random() * 0.22, // 0.38-0.60 at hold
         born: now,
         life: BLURB_LIFE_MS * (0.85 + Math.random() * 0.45),
       };

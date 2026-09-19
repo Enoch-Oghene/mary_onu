@@ -52,13 +52,11 @@ export function LNHalo({ className = "" }) {
 export function Wordmark({ className = "" }) {
   return (
     <div className={`leading-[0.9] ${className}`}>
-      <div
-        className="text-[26px] tracking-tight text-black italic font-black font-serif"
-      >
-        LANDO
+      <div className="text-[26px] tracking-tight text-black italic font-black font-serif">
+        Madam Mary
       </div>
       <div className="text-[26px] font-black tracking-tight text-black -mt-0.5 font-sans">
-        NORRIS
+        Onu Ogwo
       </div>
     </div>
   );
@@ -68,13 +66,11 @@ export function Wordmark({ className = "" }) {
 export function WordmarkInline({ className = "" }) {
   return (
     <div className={`flex items-baseline gap-1.5 leading-none ${className}`}>
-      <span
-        className="text-[32px] tracking-tight text-black italic font-black font-serif"
-      >
-        LANDO
+      <span className="text-[24px] tracking-tight text-black italic font-black font-serif">
+        Madam Mary
       </span>
-      <span className="text-[32px] font-black tracking-tight text-black font-sans">
-        NORRIS
+      <span className="text-[24px] font-black tracking-tight text-black font-sans">
+        Onu Ogwo
       </span>
     </div>
   );
