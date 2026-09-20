@@ -182,10 +182,26 @@ export default function GallerySection() {
       <div className="relative z-10 flex flex-col">
         {/* ============ WRITEUP (was LegacySection) ============ */}
         <div
-          className="min-h-screen flex flex-col items-center justify-center px-6 py-16 md:py-32"
+          className="min-h-[50vh] flex flex-col items-center justify-center px-6 py-8 md:py-16"
           style={{ color: "#EFEBDE" }}
         >
-          <div className="max-w-3xl text-center leading-[1.35] text-[17px] md:text-[26px] uppercase">
+          <div className="w-full max-w-3xl uppercase leading-[1.35] text-[17px] md:text-[26px] text-center">
+            {/* Two shape-outside floats sculpt a bottom-half-oval:
+                each takes half the width and holds a quarter-ellipse
+                anchored to its bottom-inner corner. The text flowing
+                between them starts full-width at the top and curves
+                inward following the ellipse edges, tapering to a
+                point at the bottom-center where the two ellipses meet. */}
+            <div
+              className="float-left w-1/2 h-[520px] md:h-[440px]"
+              style={{ shapeOutside: "ellipse(100% 100% at 0% 100%)" }}
+              aria-hidden
+            />
+            <div
+              className="float-right w-1/2 h-[520px] md:h-[440px]"
+              style={{ shapeOutside: "ellipse(100% 100% at 100% 100%)" }}
+              aria-hidden
+            />
             <Cream>
               The family wishes to express their deep appreciation for the many
               expressions of{" "}
@@ -199,6 +215,8 @@ export default function GallerySection() {
             </Cream>
             <Acid>Jehovah</Acid>
             <Cream> grant everyone a safe trip back to their places.</Cream>
+            {/* Clear the floats so the container wraps their full height */}
+            <div className="clear-both" />
           </div>
         </div>
 
