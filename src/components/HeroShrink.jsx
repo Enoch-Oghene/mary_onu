@@ -4,15 +4,23 @@ import HeroTopoBackground from "./HeroTopoBackground.jsx";
 const PORTRAIT = "/portraits/portrait_hero.webp";
 
 // Ticker text — repeats across both rows, moves in opposite directions
-const TICKER_A = "AT HOME WE DID IT ";
-const TICKER_B = "A BRITISH GP WEEKEND I WILL REMEMBER FOREVER ";
+const TICKER_A =
+  "Funeral Service — Time: 2:00 PM CST | 3:00 PM EST | 8:00 PM GMT+1 | 5:00 AM GMT+15 (next day), Zoom: 813 4434 7827, Passcode: MARY7626";
+const TICKER_B =
+  "Memorial Talk & Repas — Time: 4:30 PM CST | 5:30 PM EST | 10:30 PM GMT+1 | 7:30 AM GMT+15 (next day), Venue: Kingdom Hall of Jehovah's Witnesses, 16110 Chimney Rock Rd, Houston, TX 77053, Zoom: 810 375 0099, Passcode: SPO1914";
 
 const smoothstep = (t) => (t < 0 ? 0 : t > 1 ? 1 : t * t * (3 - 2 * t));
 const lerp = (a, b, t) => a + (b - a) * t;
 
 // Seamless-loop ticker row: two identical inline blocks slide by -100% of their own width
 function TickerRow({ text, speedSec, direction, className = "", style }) {
-  const repeated = new Array(6).fill(text).join(" ");
+  // Repeat count scales inversely with source length so the total ticker
+  // width — and therefore the visual scroll speed — stays roughly constant
+  // no matter how short or long the text is. Short slogans get many
+  // repeats to fill the viewport; long paragraphs get one, so they don't
+  // fly across the screen unreadably fast.
+  const repeat = Math.max(1, Math.ceil(120 / Math.max(1, text.length)));
+  const repeated = new Array(repeat).fill(text).join(" ");
   const anim = {
     animation: `ticker-${direction} ${speedSec}s linear infinite`,
   };
