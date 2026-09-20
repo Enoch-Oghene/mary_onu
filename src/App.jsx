@@ -4,6 +4,7 @@ import SharedBackground from "./components/SharedBackground.jsx";
 import GallerySection from "./components/GallerySection.jsx";
 import OnOffSection from "./components/OnOffSection.jsx";
 import LifeTributeSection from "./components/LifeTributeSection.jsx";
+import MemoriesSection from "./components/MemoriesSection.jsx";
 import Menu from "./components/Menu.jsx";
 import {
   Wordmark,
@@ -69,6 +70,7 @@ export default function App() {
       <GallerySection />
       <OnOffSection />
       <LifeTributeSection />
+      <MemoriesSection />
 
       {/* ============= MENU OVERLAY ============= */}
       <Menu open={menuOpen} onClose={() => setMenuOpen(false)} />
