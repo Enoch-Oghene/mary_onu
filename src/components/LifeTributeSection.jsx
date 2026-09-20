@@ -3,20 +3,41 @@
 // Life Tribute / Obituary section. Modelled on HelmetsSection: a full-
 // width hero photo up top, a dark olive text panel underneath.
 //
-// The section is pulled up (via negative margin-top) so it OVERLAPS
-// the preceding OnOffSection by 35% of that section's half-portrait
-// height — the LifeTribute hero photo covers the bottom ~35% of those
-// portraits, leaving ~65% (face, neck, shoulders) visible above the
-// cut.
+// TWO-STAGE OVERLAP OVER THE PRECEDING SECTION.
 //
-// The overlap constant holds across viewports because the portraits'
-// aspect ratio is CSS-locked to their natural 1728 × 2249:
-//   • Mobile — portrait width is `170% × 50vw` = 85vw, so its height
-//     is 85vw × (2249/1728) ≈ 110.6vw. 35% of that ≈ 39vw → mt-[-39vw].
-//   • Desktop — portrait width is fixed at 360px (md:w-[360px]), so
-//     its height is 360 × 1.302 ≈ 469px. 35% ≈ 164px → md:mt-[-164px].
+// Stage 1 — baseline via CSS negative margin (mt-[-39vw] md:mt-[-164px]):
+// Pulls the section up 35% of the PoS half-portrait height in the DOM
+// itself, so from the moment the section enters the viewport it sits
+// with that hard border already cut across the portraits' bodies —
+// this is the state visible in the reference screenshot.
 //
-// z-10 puts the section above the portraits' z-[5] stacking context.
+// Stage 2 — scroll-driven climb on top (JS translateY):
+// From that baseline, as the user continues to scroll, the section
+// translates further upward via CSS transform. By the end of the
+// entry animation the section's visual top lands at exactly the top
+// of the viewport (row 0). It has "scrolled over" the portraits and
+// reached the top of the page. After that, translate stays clamped
+// at max, so continued scrolling carries the section past viewport-
+// top naturally.
+//
+// The two work together — CSS gives the initial anchor, JS drives
+// the motion. Removing the CSS margin would make the section start
+// with no overlap; removing the JS would freeze it at the static
+// baseline. Both are needed for the effect described.
+//
+// How the numbers combine:
+//   • CSS margin ≈ 35% of portrait height (39vw mobile / 164px desktop).
+//     Portraits are 170% × 50vw wide = 85vw, aspect 1728:2249 → height
+//     ≈ 110.6vw. Desktop portraits are 360px wide → height ≈ 469px.
+//   • Progress ramps 0 → 1 as the section's natural (WITH-margin) top
+//     slides from viewport-bottom (vh) up to 40% down viewport (0.4·vh).
+//   • Max translate = 0.4 · vh. At progress 1 the natural top with
+//     margin is at 0.4vh and translate is -0.4vh, so visual top =
+//     0.4vh − 0.4vh = 0.
+//
+// z-10 puts the section above the portraits' z-[5] stacking context
+// so both the CSS-margin overlap and the JS-translated climb paint
+// over the portraits, not under them.
 //
 // Text panel uses a 2-column CSS grid with the three body paragraphs
 // placed in a staircase / editorial-zigzag pattern:
@@ -28,20 +49,95 @@
 // Section is `min-h-screen` so the tall obituary text can grow the
 // mobile viewport past 100vh without cutting anything off; on desktop
 // the same content sits comfortably inside a single screen.
-//
-// No scroll animation — it enters via natural page flow, same as
-// HelmetsSection, so it "scrolls up" from below as the user continues
-// past the Program of Service section.
+
+import { useEffect, useRef, useState } from "react";
 
 const OLIVE = "#25281A";
 const CREAM = "#EFEBDE";
 const PHOTO = "/gallery/tribute.webp";
 
 export default function LifeTributeSection() {
+  const sectionRef = useRef(null);
+  const [progress, setProgress] = useState(0);
+  const [maxOffset, setMaxOffset] = useState(0);
+
+  // Scroll-driven overlap. Progress goes 0 → 1 as the section's natural
+  // top slides from viewport-bottom (vh) up to 40% down viewport
+  // (0.4·vh). Multiplied by maxOffset that becomes the translateY the
+  // section is nudged up by, on top of the CSS margin already applied.
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+
+    let rafId = 0;
+
+    // Natural document-top of the section, unaffected by any transform.
+    // getBoundingClientRect() would include the transform we're about
+    // to apply — walking the offsetTop chain avoids that. Measured on
+    // every frame (not just at mount) so layout shifts from lazy-loaded
+    // images upstream don't leave us with a stale value.
+    const getOffsetTop = () => {
+      let top = 0;
+      let cursor = el;
+      while (cursor) {
+        top += cursor.offsetTop;
+        cursor = cursor.offsetParent;
+      }
+      return top;
+    };
+
+    const measure = () => {
+      // Max translate = 40% of viewport height. Combined with the
+      // progress-1 endpoint below (natural top with-margin at 0.4·vh),
+      // this puts the section's VISUAL top at exactly 0 (viewport top)
+      // at the end of the animation — it has "scrolled over" the
+      // portraits all the way up to the top of the page.
+      setMaxOffset(window.innerHeight * 0.4);
+    };
+
+    const update = () => {
+      const vh = window.innerHeight || 1;
+      const sectionTop = getOffsetTop();
+      const relTop = sectionTop - window.scrollY; // natural viewport-top
+      const start = vh; // 0 progress when section top at vp-bottom
+      const end = vh * 0.4; // 1 progress when section top at 40% down vp
+      const t = Math.max(0, Math.min(1, (start - relTop) / (start - end)));
+      setProgress(t);
+    };
+
+    const onScroll = () => {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(update);
+    };
+    const onResize = () => {
+      measure();
+      update();
+    };
+
+    measure();
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
+      cancelAnimationFrame(rafId);
+    };
+  }, []);
+
+  // Smoothstep easing so the climb doesn't feel mechanical.
+  const p = progress * progress * (3 - 2 * progress);
+  const translateY = -maxOffset * p;
+
   return (
     <section
+      ref={sectionRef}
       className="relative w-full overflow-hidden min-h-screen z-10 mt-[-39vw] md:mt-[-164px]"
-      style={{ background: OLIVE }}
+      style={{
+        background: OLIVE,
+        transform: `translateY(${translateY}px)`,
+        willChange: "transform",
+      }}
     >
       {/* ============ TOP — Hero photo ============ */}
       {/* object-top keeps her face in the frame when the display aspect
