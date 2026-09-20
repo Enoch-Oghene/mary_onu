@@ -21,7 +21,6 @@
 // background moves with the content.
 
 import { useEffect, useRef, useState } from "react";
-import AnimatedTopo from "./AnimatedTopo.jsx";
 
 function HookArrow({ mirror = false, className = "" }) {
   const d = mirror
@@ -45,7 +44,6 @@ function HookArrow({ mirror = false, className = "" }) {
 
 export default function OnOffSection() {
   const OLIVE = "#25281A";
-  const CREAM = "#EFEBDE";
 
   const sectionRef = useRef(null);
   const [progress, setProgress] = useState(0);
@@ -84,32 +82,10 @@ export default function OnOffSection() {
     <section
       ref={sectionRef}
       className="relative overflow-hidden"
-      style={{ background: CREAM, color: OLIVE, height: "100vh" }}
+      style={{ color: OLIVE, height: "100vh" }}
     >
-      {/* Pinned topo overlay — the whole background stays fixed to the
-          viewport while content scrolls over it. Same olive tint the
-          cream half of the gallery uses. */}
-      <div
-        className="pointer-events-none z-0"
-        aria-hidden
-        style={{
-          position: "sticky",
-          top: 0,
-          height: "100vh",
-          width: "100%",
-          marginBottom: "-100vh",
-        }}
-      >
-        <AnimatedTopo
-          bg={null}
-          lineColor="rgba(120, 130, 90, 0.45)"
-          strokeWidth={1.1}
-          numBlobs={7}
-          numLevels={5}
-          levelStart={0.15}
-          levelStep={0.32}
-        />
-      </div>
+      {/* Background intentionally omitted — the shared static background
+          in App.jsx provides the cream + topo canvas that shows through. */}
 
       <div className="relative z-10 grid grid-cols-2 h-full">
         {/* ============ LEFT — ON TRACK (all RIGHT-aligned) ============ */}

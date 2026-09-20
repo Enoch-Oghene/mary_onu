@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import HeroShrink from "./components/HeroShrink.jsx";
+import SharedBackground from "./components/SharedBackground.jsx";
 import GallerySection from "./components/GallerySection.jsx";
 import OnOffSection from "./components/OnOffSection.jsx";
 import Menu from "./components/Menu.jsx";
@@ -58,7 +59,11 @@ export default function App() {
   }, [locked]);
 
   return (
-    <div className="w-full bg-cream">
+    <div className="w-full">
+      {/* Static background for all post-hero sections. Position:fixed so
+          it never scrolls; DOM-ordered before <HeroShrink /> so the hero's
+          own opaque stack paints on top of it during hero scroll. */}
+      <SharedBackground />
       <HeroShrink />
       <GallerySection />
       <OnOffSection />

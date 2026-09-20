@@ -12,8 +12,8 @@
 // hand-off point. The topo canvas is pinned in the same viewport layer
 // so its contour lines animate in place instead of moving with content.
 
-import { useEffect, useRef, useState } from "react";
-import AnimatedTopo from "./AnimatedTopo.jsx";
+import { useState } from "react";
+import { CREAM_FADE_MARKER_ID } from "./SharedBackground.jsx";
 
 // ---- Writeup typography -----------------------------------------------------
 const acidStyle = {
@@ -159,9 +159,6 @@ function Quote({ text, align = "left", widthClass = "w-3/5", offset = "" }) {
 // -----------------------------------------------------------------------------
 
 export default function GallerySection() {
-  const OLIVE = "#25281A";
-  const CREAM = "#EFEBDE";
-
   // Pick 3 of the 9 photos (indices 0..8) to display with the menu's
   // inactive-tile treatment. Selection is randomised once on mount so
   // it doesn't reshuffle on every render.
@@ -175,80 +172,13 @@ export default function GallerySection() {
   });
   const isTinted = (i) => tintedIndices.has(i);
 
-  // Marker sits in the DOM between photo 4 and photo 5. A scroll listener
-  // maps its viewport position to a cream-opacity value: fade begins when
-  // the marker enters the lower part of the viewport and completes about
-  // a viewport after it has scrolled past the top — a ~120vh scroll
-  // range, so the palette drift feels seamless with no visible cut-over.
-  const markerRef = useRef(null);
-  const [creamAmount, setCreamAmount] = useState(0);
-
-  useEffect(() => {
-    let raf = 0;
-    const update = () => {
-      const marker = markerRef.current;
-      if (!marker) return;
-      const rect = marker.getBoundingClientRect();
-      const vh = window.innerHeight || 1;
-      const start = vh * 0.9;
-      const end = vh * -0.3;
-      const t = Math.max(0, Math.min(1, (start - rect.top) / (start - end)));
-      setCreamAmount(t);
-    };
-    const onScroll = () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(update);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    update();
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-      cancelAnimationFrame(raf);
-    };
-  }, []);
+  // The cream-fade marker below (a bare div carrying CREAM_FADE_MARKER_ID)
+  // is what SharedBackground reads to drive the olive→cream drift. Its
+  // position between the two photo halves is unchanged — only the listener
+  // moved.
 
   return (
     <section className="relative">
-      {/* Pinned background stack — the olive base is always there, the
-          cream overlay's opacity is driven by scroll, and the topo
-          canvas sits above both. Because everything lives inside one
-          sticky, viewport-sized container, none of it scrolls with the
-          page: only its colour drifts. Negative bottom margin removes
-          the sticky element from layout so the content flows over it. */}
-      <div
-        className="pointer-events-none z-0"
-        aria-hidden
-        style={{
-          position: "sticky",
-          top: 0,
-          height: "100vh",
-          width: "100%",
-          marginBottom: "-100vh",
-        }}
-      >
-        {/* Olive base */}
-        <div className="absolute inset-0" style={{ background: OLIVE }} />
-        {/* Cream overlay — fades in with scroll */}
-        <div
-          className="absolute inset-0"
-          style={{ background: CREAM, opacity: creamAmount }}
-        />
-        {/* Topo lines: fixed olive-family tint that reads as a light
-            tone-in-tone on the olive half and a soft dusty tint on the
-            cream half — no white, no adaptive blending. */}
-        <AnimatedTopo
-          bg={null}
-          lineColor="rgba(120, 130, 90, 0.45)"
-          strokeWidth={1.1}
-          numBlobs={7}
-          numLevels={5}
-          levelStart={0.15}
-          levelStep={0.32}
-        />
-      </div>
-
       <div className="relative z-10 flex flex-col">
         {/* ============ WRITEUP (was LegacySection) ============ */}
         <div
@@ -319,7 +249,7 @@ export default function GallerySection() {
               sits here — its viewport position drives the cream fade,
               so by the time the second-half photos are on screen the
               bg is far enough into cream for their darker text to read. */}
-          <div ref={markerRef} className="h-24 md:h-32" />
+          <div id={CREAM_FADE_MARKER_ID} className="h-24 md:h-32" />
 
           {/* -------- second half of photos (bg has faded to cream) -------- */}
           <div className="flex flex-col" style={{ color: "#25281A" }}>

@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import AnimatedTopo from "./AnimatedTopo.jsx";
 import HeroTopoBackground from "./HeroTopoBackground.jsx";
 
 const PORTRAIT = "/portraits/portrait_hero.webp";
@@ -130,9 +129,15 @@ export default function HeroShrink() {
   const portraitW = Math.min(initialPortraitW, frameW);
 
   // Layer opacities
-  const oliveOpacity = smoothstep(Math.min(1, progress * 1.4));
+  // videoOpacity fades the hero's own cream/topo bg fully out during the
+  // shrink, so the static SharedBackground olive+topo (rendered globally
+  // in App.jsx at position:fixed) becomes the "green" end state seen in
+  // frames 4–6. Small dead-zone at the start (progress ≤ 0.05) keeps the
+  // opacity locked at 1 so tiny scroll-wobble at rest can't briefly leak
+  // the olive through the cream — same defensive intent the previous
+  // opaque bg-white div served.
+  const videoOpacity = 1 - smoothstep(Math.max(0, (progress - 0.05) / 0.6));
   const tickerOpacity = smoothstep(Math.max(0, (progress - 0.18) * 2.1));
-  const videoOpacity = 1 - Math.min(0.7, progress * 0.9);
   // Olive wash on the photo — matches the inactive tiles in the desktop menu.
   // Fades in as we approach the final frame so the photo tints down to the
   // olive background colour.
@@ -144,31 +149,16 @@ export default function HeroShrink() {
       className="relative"
       style={{ height: "140vh" }}
     >
-      <div className="sticky top-0 h-screen overflow-hidden bg-white">
-        {/* Base white background — matches the topo's own fill so any
-            partial transparency in the topo layer (e.g. tiny scroll wobble
-            pushing videoOpacity below 1.0) can't reveal a different colour.
-            Was bg-cream previously, which caused a warm strip to bleed
-            through at the top on mobile browsers. */}
-        <div className="absolute inset-0 bg-white" />
-
-        {/* Animated topo background — hoisted out of the shrinking frame so
-            it covers the full sticky container (100vh) instead of just the
-            frame (which is window.innerHeight, and can be shorter than 100vh
-            on mobile browsers where the URL bar makes the visible viewport
-            smaller than the large one). Fades on scroll via videoOpacity;
-            pauses once the hero has mostly shrunk away so we don't burn CPU
-            while the olive+topo layer is doing the heavy lifting. */}
+      <div className="sticky top-0 h-screen overflow-hidden">
+        {/* Hero cream stack — the white base + interactive topo canvas
+            fade together with scroll. As they clear, the static
+            SharedBackground (fixed to viewport in App.jsx) shows
+            through, becoming the olive "green" end state of the hero.
+            Nothing here provides the olive itself — that lives in
+            SharedBackground so it never moves. */}
         <div className="absolute inset-0" style={{ opacity: videoOpacity }}>
+          <div className="absolute inset-0 bg-white" />
           <HeroTopoBackground active={progress < 0.6} />
-        </div>
-
-        {/* Olive + animated topo — fades in as we scroll */}
-        <div
-          className="absolute inset-0"
-          style={{ opacity: oliveOpacity, background: "#25281A" }}
-        >
-          <AnimatedTopo />
         </div>
 
         {/* Writeup — sits under the photo. Two rows with distinct
