@@ -178,7 +178,7 @@ export default function HeroShrink() {
             typography: Poppins Light acid on top, Montserrat Bold white
             below, in line with the reference. */}
         <div
-          className="absolute left-0 right-0 flex flex-col gap-[2px] pointer-events-none z-30"
+          className="absolute left-0 right-0 flex flex-col gap-0 pointer-events-none z-30"
           style={{
             top: `calc(50% + ${frameH / 2 + 28}px)`,
             opacity: tickerOpacity,
@@ -189,14 +189,14 @@ export default function HeroShrink() {
             speedSec={45}
             direction="left"
             className="text-[17px] md:text-[21px] leading-none tracking-wider text-acid"
-            style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 300 }}
+            style={{ fontFamily: "'Anton', sans-serif", fontWeight: 500 }}
           />
           <TickerRow
             text={TICKER_B}
             speedSec={40}
             direction="right"
             className="text-[14px] md:text-[17px] leading-none tracking-wider text-white"
-            style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 700 }}
+            style={{ fontFamily: "'Anton', sans-serif", fontWeight: 700 }}
           />
         </div>
 
