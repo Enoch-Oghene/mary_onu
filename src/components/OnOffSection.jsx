@@ -89,7 +89,7 @@ export default function OnOffSection() {
           style={{
             fontFamily: "'Playfair Display', serif",
             fontWeight: 700,
-            color: "#D2FF00",
+            color: "#282C20",
           }}
         >
           Program of Service
