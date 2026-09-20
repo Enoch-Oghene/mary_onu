@@ -100,9 +100,14 @@ export default function HeroShrink() {
 
   // ---- derived visual state from scroll progress ----
   const { w: W, h: H } = size;
-  // End-of-scroll frame — a portrait 4:5 rectangle (matches the reference),
-  // sized to about 62vh tall and 4/5 of that wide.
-  const endH = Math.min(H * 0.62, 500);
+  // End-of-scroll frame — a portrait 4:5 rectangle sized so it always
+  // leaves visible breathing room on every side. Constrained by BOTH
+  // viewport dimensions: ≤78% of width (guarantees ~11% margin on each
+  // side of the frame), ≤58% of height, and a hard 460px height cap —
+  // whichever hits first. Narrow mobile viewports are width-limited
+  // (that's what puts space on the left/right); desktop and tablet stay
+  // height-limited (frame doesn't grow arbitrarily on tall screens).
+  const endH = Math.min(H * 0.58, (W * 0.78) / 0.8, 460);
   const endW = endH * 0.8;
 
   // Uniform shrink: width and height contract together on the same curve so
