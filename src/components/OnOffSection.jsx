@@ -86,7 +86,11 @@ export default function OnOffSection() {
             columns meet in the middle around it). */}
         <h2
           className="text-center leading-[0.95] text-[28px] md:text-[44px] italic"
-          style={{ fontFamily: "'Playfair Display', serif", fontWeight: 700 }}
+          style={{
+            fontFamily: "'Playfair Display', serif",
+            fontWeight: 700,
+            color: "#D2FF00",
+          }}
         >
           Program of Service
         </h2>
@@ -102,6 +106,7 @@ export default function OnOffSection() {
             style={{
               fontFamily: "'Inter', sans-serif",
               fontWeight: 900,
+              color: "#282C20",
               transform: leftT,
               willChange: "transform",
             }}
@@ -113,6 +118,7 @@ export default function OnOffSection() {
             style={{
               fontFamily: "'Inter', sans-serif",
               fontWeight: 900,
+              color: "#282C20",
               transform: rightT,
               willChange: "transform",
             }}
