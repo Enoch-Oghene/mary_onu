@@ -185,17 +185,20 @@ export default function GallerySection() {
           className="min-h-screen flex flex-col items-center justify-center px-6 py-16 md:py-32"
           style={{ color: "#EFEBDE" }}
         >
-          <div className="max-w-4xl text-center leading-[1.05] tracking-tight text-[24px] md:text-[68px]">
-            <Acid>REDEFINING</Acid> <Cream>LIMITS,</Cream>
-            <br className="md:hidden" /> <Cream>FIGHTING FOR</Cream>
-            <br className="md:hidden" /> <Acid>WINS</Acid>
-            <Cream>, BRINGING IT</Cream>
-            <br className="md:hidden" /> <Cream>ALL IN ALL WAYS.</Cream>
-            <br className="md:hidden" /> <Cream>DEFINING A</Cream>{" "}
-            <Acid>LEGACY</Acid>
-            <br className="md:hidden" /> <Cream>IN FORMULA 1 ON</Cream>
-            <br className="md:hidden" /> <Cream>AND OFF THE</Cream>
-            <br className="md:hidden" /> <Cream>TRACK.</Cream>
+          <div className="max-w-3xl text-center leading-[1.35] text-[17px] md:text-[26px] uppercase">
+            <Cream>
+              The family wishes to express their deep appreciation for the many
+              expressions of{" "}
+            </Cream>
+            <Acid>love</Acid>
+            <Cream>, comforting words, </Cream>
+            <Acid>prayers</Acid>
+            <Cream>
+              , and practical support received during this difficult time. We
+              pray that{" "}
+            </Cream>
+            <Acid>Jehovah</Acid>
+            <Cream> grant everyone a safe trip back to their places.</Cream>
           </div>
         </div>
 
