@@ -21,12 +21,14 @@ export default function App() {
 
   // Smoothly fade the hero-page chrome across the shrink scroll so it hands
   // off to the "MESSAGE FROM LANDO" label inside <HeroShrink /> at the end.
+  // Retuned for the sensitive 140vh shrink container: the whole shrink runs
+  // in ~40vh of scroll, so the chrome fade sits inside the first ~28vh —
+  // fully visible ≤ 15vh, gone by 28vh, tracking the shrink 1:1.
   useEffect(() => {
     const onScroll = () => {
       const y = window.scrollY;
       const vh = window.innerHeight;
-      // Fade window: fully visible ≤ 1.5vh scroll, hidden by 2.2vh
-      const op = Math.max(0, Math.min(1, (2.2 * vh - y) / (0.7 * vh)));
+      const op = Math.max(0, Math.min(1, (0.28 * vh - y) / (0.13 * vh)));
       setChromeOpacity(op);
       setScrolled(y > 40);
     };

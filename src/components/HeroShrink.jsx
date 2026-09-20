@@ -106,29 +106,28 @@ export default function HeroShrink() {
   const endH = Math.min(H * 0.62, 500);
   const endW = endH * 0.8;
 
-  // Height shrinks earlier than width, so the frame becomes wide-landscape
-  // before finally reshaping to a portrait rectangle.
-  const hProg = smoothstep(Math.min(1, progress / 0.55));
-  const wProg = smoothstep(Math.max(0, Math.min(1, (progress - 0.18) / 0.82)));
-  const frameH = lerp(H, endH, hProg);
-  const frameW = lerp(W, endW, wProg);
+  // Uniform shrink: width and height contract together on the same curve so
+  // the frame stays a clean rectangle throughout the scroll and just becomes
+  // more portrait-oriented as it approaches the end. Completes by ~progress
+  // 0.8, leaving the final ~20% for the tint / marquee to finish settling.
+  const shrinkProg = smoothstep(Math.min(1, progress / 0.8));
+  const frameH = lerp(H, endH, shrinkProg);
+  const frameW = lerp(W, endW, shrinkProg);
 
   // Portrait sizing — at rest (progress 0) the portrait is bottom-anchored
-  // inside the frame with its natural aspect ratio, sized to about 92vh on
-  // desktop and 65vh on mobile (matching the reference screenshots). As we
-  // scroll, the portrait grows to fill the shrinking frame so the shrink
-  // animation continues to work with object-cover face framing.
+  // inside the frame with its natural aspect ratio (~65vh on mobile, ~92vh
+  // on desktop) to match the reference. During scroll it must NEVER grow —
+  // only shrink. Clamp its dimensions to their initial values so the frame
+  // does the shrinking on its own; once the frame contracts below the
+  // portrait's initial size, the portrait starts tracking the frame 1:1.
   const PORTRAIT_ASPECT = 976 / 675;
   const isMobile = W < 768;
   const initialPortraitH = isMobile
     ? Math.min(H * 0.65, 680)
     : Math.min(H * 0.92, 920);
   const initialPortraitW = initialPortraitH * PORTRAIT_ASPECT;
-  // Grow the portrait to catch up with the frame within the first ~25% of
-  // scroll; from there it tracks the shrinking frame 1:1.
-  const fillProg = smoothstep(Math.min(1, progress / 0.25));
-  const portraitH = lerp(initialPortraitH, frameH, fillProg);
-  const portraitW = lerp(initialPortraitW, frameW, fillProg);
+  const portraitH = Math.min(initialPortraitH, frameH);
+  const portraitW = Math.min(initialPortraitW, frameW);
 
   // Layer opacities
   const oliveOpacity = smoothstep(Math.min(1, progress * 1.4));
@@ -143,7 +142,7 @@ export default function HeroShrink() {
     <section
       ref={containerRef}
       className="relative"
-      style={{ height: "350vh" }}
+      style={{ height: "140vh" }}
     >
       <div className="sticky top-0 h-screen overflow-hidden bg-white">
         {/* Base white background — matches the topo's own fill so any
