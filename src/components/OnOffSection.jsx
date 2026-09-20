@@ -73,6 +73,7 @@ export default function OnOffSection() {
   return (
     <section
       ref={sectionRef}
+      id="program-of-service"
       className="relative overflow-hidden min-h-screen"
       style={{ color: OLIVE }}
     >

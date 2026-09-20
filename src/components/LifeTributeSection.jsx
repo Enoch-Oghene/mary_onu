@@ -132,6 +132,7 @@ export default function LifeTributeSection() {
   return (
     <section
       ref={sectionRef}
+      id="life-tribute"
       className="relative w-full overflow-hidden min-h-screen z-10 mt-[-39vw] md:mt-[-164px]"
       style={{
         background: OLIVE,

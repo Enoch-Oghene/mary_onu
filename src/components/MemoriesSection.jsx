@@ -135,6 +135,7 @@ export default function MemoriesSection() {
 
   return (
     <section
+      id="memories"
       className="relative w-full overflow-hidden flex flex-col"
       style={{ color: OLIVE, height: "100vh" }}
     >

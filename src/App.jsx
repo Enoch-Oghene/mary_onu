@@ -61,82 +61,113 @@ export default function App() {
   }, [locked]);
 
   return (
-    <div className="w-full">
-      {/* Static background for all post-hero sections. Position:fixed so
-          it never scrolls; DOM-ordered before <HeroShrink /> so the hero's
-          own opaque stack paints on top of it during hero scroll. */}
-      <SharedBackground />
-      <HeroShrink />
-      <GallerySection />
-      <OnOffSection />
-      <LifeTributeSection />
-      <MemoriesSection />
+    // OUTER — full browser viewport, cream surround. Anything outside the
+    // 430px mobile column (on desktop / tablet) shows this cream. Note
+    // that SharedBackground below is `position: fixed` and covers the
+    // whole browser too — so the topo/cream aesthetic extends edge-to-
+    // edge on desktop, with the mobile content column floating in the
+    // middle of it. Chrome (GIVE, menu button, TapToLock) also stays
+    // fixed to the browser viewport corners — instead of trying to pin
+    // them to the mobile column, we let them behave like normal web-app
+    // chrome (Instagram-web-style). Always accessible on scroll.
+    <div
+      style={{
+        background: "#EFEBDE",
+        minHeight: "100vh",
+        width: "100%",
+      }}
+    >
+      {/* INNER — the mobile content column. Capped at 430px wide (widest
+          common phone) and centred. No transform: keeping fixed
+          descendants viewport-relative so they don't scroll away. */}
+      <div
+        className="w-full"
+        style={{
+          maxWidth: "430px",
+          margin: "0 auto",
+          minHeight: "100vh",
+          position: "relative",
+          background: "#EFEBDE",
+        }}
+      >
+        {/* Static background for all post-hero sections. Position:fixed so
+            it never scrolls; DOM-ordered before <HeroShrink /> so the hero's
+            own opaque stack paints on top of it during hero scroll. */}
+        <SharedBackground />
+        <HeroShrink />
+        <GallerySection />
+        <OnOffSection />
+        <LifeTributeSection />
+        <MemoriesSection />
 
-      {/* ============= MENU OVERLAY ============= */}
-      <Menu open={menuOpen} onClose={() => setMenuOpen(false)} />
+        {/* ============= MENU OVERLAY ============= */}
+        <Menu open={menuOpen} onClose={() => setMenuOpen(false)} />
 
-      {/* ============= CHROME ============= */}
-      {/* Store — top-left on mobile, top-right (grouped with menu) on desktop */}
-      <div className="fixed top-4 left-4 z-[60] md:hidden">
-        <StoreButton />
-      </div>
-      <div className="fixed top-4 right-4 z-[60] flex items-center gap-2">
-        <div className="hidden md:block">
+        {/* ============= CHROME =============
+            Note: all `md:*` classes below are inert — the site is mobile-
+            only via tailwind.config.js. Kept as dead code for now to
+            avoid a sweeping refactor; they simply never activate. */}
+        {/* Store — top-left on mobile */}
+        <div className="fixed top-4 left-4 z-[60] md:hidden">
           <StoreButton />
         </div>
-        {menuOpen ? (
-          <CloseButton onClick={() => setMenuOpen(false)} />
-        ) : (
-          <MenuButton onClick={() => setMenuOpen(true)} />
-        )}
-      </div>
-
-      {/* Desktop wordmark top-left — hidden while menu is open */}
-      {!menuOpen && (
-        <div
-          className="fixed top-5 left-6 z-40 hidden md:block"
-          style={{ opacity: chromeOpacity }}
-        >
-          <Wordmark />
+        <div className="fixed top-4 right-4 z-[60] flex items-center gap-2">
+          <div className="hidden md:block">
+            <StoreButton />
+          </div>
+          {menuOpen ? (
+            <CloseButton onClick={() => setMenuOpen(false)} />
+          ) : (
+            <MenuButton onClick={() => setMenuOpen(true)} />
+          )}
         </div>
-      )}
 
-      {/* Top-centre LN halo + mobile wordmark stack.
-          Smoothly fades over the shrink scroll and hands off to the
-          "MESSAGE FROM LANDO" label rendered by HeroShrink at the end. */}
-      {!menuOpen && (
-        <div
-          className="fixed top-16 left-1/2 -translate-x-1/2 w-max z-40 flex flex-col items-center gap-2 md:top-4 md:gap-0"
-          style={{
-            opacity: chromeOpacity,
-            pointerEvents: chromeOpacity < 0.05 ? "none" : "auto",
-          }}
-        >
-          <div className="md:hidden flex flex-col items-center gap-1 mt-24">
-            <WordmarkInline />
-            <div
-              className="text-[8px] tracking-[0.3em] font-bold text-black/75"
-              style={{ fontFamily: "'Inter', sans-serif" }}
-            >
-              September 1963 – July 2026
+        {/* Desktop wordmark top-left — inert (md: disabled) */}
+        {!menuOpen && (
+          <div
+            className="fixed top-5 left-6 z-40 hidden md:block"
+            style={{ opacity: chromeOpacity }}
+          >
+            <Wordmark />
+          </div>
+        )}
+
+        {/* Top-centre wordmark stack (mobile).
+            Smoothly fades over the shrink scroll. */}
+        {!menuOpen && (
+          <div
+            className="fixed top-16 left-1/2 -translate-x-1/2 w-max z-40 flex flex-col items-center gap-2 md:top-4 md:gap-0"
+            style={{
+              opacity: chromeOpacity,
+              pointerEvents: chromeOpacity < 0.05 ? "none" : "auto",
+            }}
+          >
+            <div className="md:hidden flex flex-col items-center gap-1 mt-24">
+              <WordmarkInline />
+              <div
+                className="text-[8px] tracking-[0.3em] font-bold text-black/75"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                September 1963 – July 2026
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Next Race — desktop only, only at rest */}
-      {!menuOpen && !scrolled && (
-        <div className="hidden md:block">
-          <NextRaceCard race="BAKU GP" />
-        </div>
-      )}
+        {/* Next Race — desktop only (inert) */}
+        {!menuOpen && !scrolled && (
+          <div className="hidden md:block">
+            <NextRaceCard race="BAKU GP" />
+          </div>
+        )}
 
-      {/* Tap-to-lock — mobile only, only at rest */}
-      {!menuOpen && !scrolled && (
-        <div className="fixed bottom-4 right-4 z-50 md:hidden">
-          <TapToLock locked={locked} onToggle={() => setLocked((v) => !v)} />
-        </div>
-      )}
+        {/* Tap-to-lock — mobile, only at rest */}
+        {!menuOpen && !scrolled && (
+          <div className="fixed bottom-4 right-4 z-50 md:hidden">
+            <TapToLock locked={locked} onToggle={() => setLocked((v) => !v)} />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
