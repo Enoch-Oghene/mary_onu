@@ -4,17 +4,17 @@
 // width hero photo up top, a dark olive text panel underneath.
 //
 // The section is pulled up (via negative margin-top) so it OVERLAPS
-// the preceding OnOffSection by exactly 50% of that section's half-
-// portrait height — the LifeTribute hero photo covers the bottom half
-// of those portraits, leaving their face-and-neck half visible above
-// the cut.
+// the preceding OnOffSection by 35% of that section's half-portrait
+// height — the LifeTribute hero photo covers the bottom ~35% of those
+// portraits, leaving ~65% (face, neck, shoulders) visible above the
+// cut.
 //
 // The overlap constant holds across viewports because the portraits'
 // aspect ratio is CSS-locked to their natural 1728 × 2249:
 //   • Mobile — portrait width is `170% × 50vw` = 85vw, so its height
-//     is 85vw × (2249/1728) ≈ 110.6vw. Half of that ≈ 55vw → mt-[-55vw].
+//     is 85vw × (2249/1728) ≈ 110.6vw. 35% of that ≈ 39vw → mt-[-39vw].
 //   • Desktop — portrait width is fixed at 360px (md:w-[360px]), so
-//     its height is 360 × 1.302 ≈ 469px. Half ≈ 234px → md:mt-[-234px].
+//     its height is 360 × 1.302 ≈ 469px. 35% ≈ 164px → md:mt-[-164px].
 //
 // z-10 puts the section above the portraits' z-[5] stacking context.
 //
@@ -40,7 +40,7 @@ const PHOTO = "/gallery/tribute.webp";
 export default function LifeTributeSection() {
   return (
     <section
-      className="relative w-full overflow-hidden min-h-screen z-10 mt-[-55vw] md:mt-[-234px]"
+      className="relative w-full overflow-hidden min-h-screen z-10 mt-[-39vw] md:mt-[-164px]"
       style={{ background: OLIVE }}
     >
       {/* ============ TOP — Hero photo ============ */}
