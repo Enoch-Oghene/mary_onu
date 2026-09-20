@@ -3,6 +3,7 @@ import HeroShrink from "./components/HeroShrink.jsx";
 import SharedBackground from "./components/SharedBackground.jsx";
 import GallerySection from "./components/GallerySection.jsx";
 import OnOffSection from "./components/OnOffSection.jsx";
+import LifeTributeSection from "./components/LifeTributeSection.jsx";
 import Menu from "./components/Menu.jsx";
 import {
   Wordmark,
@@ -67,6 +68,7 @@ export default function App() {
       <HeroShrink />
       <GallerySection />
       <OnOffSection />
+      <LifeTributeSection />
 
       {/* ============= MENU OVERLAY ============= */}
       <Menu open={menuOpen} onClose={() => setMenuOpen(false)} />
