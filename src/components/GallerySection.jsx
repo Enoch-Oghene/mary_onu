@@ -187,21 +187,18 @@ export default function GallerySection() {
         >
           <div className="w-full max-w-3xl uppercase leading-[1.35] text-[17px] md:text-[26px] text-center">
             <Cream>
-              The family wishes to express their deep appreciation for the
-              many expressions of{" "}
+              The family wishes to express their deep appreciation for the many
+              expressions of{" "}
             </Cream>
             <Acid>love</Acid>
             <Cream>, comforting words, </Cream>
             <Acid>prayers</Acid>
             <Cream>
-              , and practical support received during this difficult time.
-              We pray that{" "}
+              , and practical support received during this difficult time. We
+              pray that{" "}
             </Cream>
             <Acid>Jehovah</Acid>
-            <Cream>
-              {" "}
-              grant everyone a safe trip back to their places.
-            </Cream>
+            <Cream> grant everyone a safe trip back to their places.</Cream>
           </div>
         </div>
 
@@ -210,14 +207,14 @@ export default function GallerySection() {
           {/* -------- olive half -------- */}
           <div className="flex flex-col" style={{ color: "#EFEBDE" }}>
             <Photo
-              caption="QATAR, 2024"
+              caption=""
               src="/gallery/g01.jpg"
               align="left"
               widthClass="w-3/5"
               inactive={isTinted(0)}
             />
             <Photo
-              caption="FIA PRIZE GIVING, 2024"
+              caption=""
               src="/gallery/g02.jpg"
               align="right"
               widthClass="w-1/2"
@@ -225,7 +222,7 @@ export default function GallerySection() {
               inactive={isTinted(1)}
             />
             <Photo
-              caption="MIAMI GP, 2024"
+              caption=""
               src="/gallery/g03.jpg"
               align="left"
               widthClass="w-3/5"
@@ -235,14 +232,14 @@ export default function GallerySection() {
             />
             <Quote
               text={
-                '"It doesn\u2019t matter where you start, it\u2019s how you progress from there."'
+                '"Do not be amazed at this, for the hour is coming in which all those in the memorial tombs will hear his voice and come out.  John 5:28, 29"'
               }
               align="left"
               widthClass="w-3/5"
               offset="mt-10"
             />
             <Photo
-              caption="BRITAIN, 2025"
+              caption=""
               src="/gallery/g04.jpg"
               align="right"
               widthClass="w-3/5"
@@ -260,14 +257,14 @@ export default function GallerySection() {
           {/* -------- second half of photos (bg has faded to cream) -------- */}
           <div className="flex flex-col" style={{ color: "#25281A" }}>
             <Photo
-              caption="BATTERSEA, 2024"
+              caption=""
               src="/gallery/g05.jpg"
               align="right"
               widthClass="w-3/5"
               inactive={isTinted(4)}
             />
             <Photo
-              caption="HIGH PERFORMANCE GALA, 2024"
+              caption=""
               src="/gallery/g06.jpg"
               align="right"
               widthClass="w-1/2"
@@ -275,7 +272,7 @@ export default function GallerySection() {
               inactive={isTinted(5)}
             />
             <Photo
-              caption="BARCELONA, 2024"
+              caption=""
               src="/gallery/g07.jpg"
               align="left"
               widthClass="w-3/5"
@@ -284,14 +281,14 @@ export default function GallerySection() {
             />
             <Quote
               text={
-                '"Since I was 7 years old and had my first experience with kart racing, I\u2019ve worked tirelessly to make that dream come true."'
+                'I saw the dead, the great and the small, standing before the throne, and scrolls were opened... And the sea gave up the dead in it, and death and the Grave gave up the dead in them, and they were judged individually according to their deeds."  — Revelation 20:12, 13'
               }
               align="left"
               widthClass="w-3/5"
               offset="mt-10"
             />
             <Photo
-              caption="AUSTRIA, 2020"
+              caption=""
               src="/gallery/g08.jpg"
               align="right"
               widthClass="w-3/5"
@@ -300,7 +297,7 @@ export default function GallerySection() {
               rotate={-90}
             />
             <Photo
-              caption="US, 2024"
+              caption=""
               src="/gallery/g09.jpg"
               align="left"
               widthClass="w-3/5"
